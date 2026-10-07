@@ -5,7 +5,7 @@ A level editor and a deterministic 2D platformer engine, in TypeScript.
 
 **Live: [pixel.badcodes.dev](https://pixel.badcodes.dev)**
 
-<!-- demo-video -->
+https://github.com/user-attachments/assets/52c7fdc5-a683-44fb-b24e-5683de49b2fd
 
 The art, sound, levels, code and names are original: the art is drawn in code and the audio is synthesised in code. The numeric parameters of the retro movement style follow published research into classic NES-era platformer movement (see [Original work](#original-work)). The simulation is its own headless TypeScript build, separate from the editor, so the physics can be tested in Node without a browser.
 
