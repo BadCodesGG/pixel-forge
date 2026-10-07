@@ -1,0 +1,17 @@
+This project's code is licensed under the MIT licence in LICENSE. The
+following are not covered by it.
+
+The Pixelify Sans and Press Start 2P typefaces are downloaded at build time
+by next/font (see src/app/layout.tsx) and served from the app's own origin.
+They are licensed under the SIL Open Font License 1.1
+(https://openfontlicense.org) and are not covered by the MIT licence:
+
+  Pixelify Sans, Copyright 2021 The Pixelify Sans Project Authors
+  (https://github.com/eifetx/Pixelify-Sans)
+
+  Press Start 2P, Copyright 2012 The Press Start 2P Project Authors
+  (cody@zone38.net), with Reserved Font Name "Press Start 2P"
+
+The BadCodes name, logo and wordmark are not licensed under the MIT
+licence. A fork keeps the copyright notice in LICENSE but should not
+present itself as BadCodes or use the logo as its own brand.

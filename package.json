@@ -1,0 +1,43 @@
+{
+  "name": "pixel-forge",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BadCodesGG/pixel-forge"
+  },
+  "homepage": "https://pixel.badcodes.dev",
+  "engines": {
+    "node": "22.x || 24.x"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "next typegen && tsc --noEmit",
+    "typecheck:engine": "tsc -p tsconfig.engine.json",
+    "check": "npm run lint && npm run typecheck && npm run typecheck:engine && npm run test"
+  },
+  "dependencies": {
+    "idb": "^8.0.3",
+    "next": "16.3.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.0",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^4.1.10"
+  }
+}

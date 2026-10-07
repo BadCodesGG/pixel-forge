@@ -1,0 +1,21 @@
+{
+  // Typechecks src/engine WITHOUT the DOM lib.
+  //
+  // This is the other half of the engine purity story (the first half is the
+  // `enginePurity` block in eslint.config.mjs). ESLint catches `document.foo`;
+  // this catches the subtler cases: a stray `HTMLCanvasElement` in a type
+  // signature, an `AudioBuffer` leaking through an interface. If it compiles
+  // here, it runs headless in Node.
+  //
+  //   npm run typecheck:engine
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": [],
+    "noEmit": true,
+    "incremental": false,
+    "plugins": []
+  },
+  "include": ["src/engine/**/*.ts"],
+  "exclude": ["node_modules", "src/engine/**/*.test.ts"]
+}

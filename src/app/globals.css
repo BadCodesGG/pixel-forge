@@ -1,0 +1,265 @@
+@import "tailwindcss";
+
+/*
+ * WHY THIS FILE IS SHORT, AND WHY WHAT IS HERE IS HERE.
+ *
+ * Almost every colour and dimension in this app comes from src/design/tokens.ts
+ * as an inline style, because the Tailwind JIT has twice silently dropped
+ * newly-added arbitrary-value classes here (once collapsing a container to 2px,
+ * once rendering every control at half size). Load-bearing numbers do not go
+ * through a build step that can degrade quietly.
+ *
+ * Three things genuinely cannot be inline styles, and those are what is below:
+ *   1. The font wiring, which has to reach Tailwind's own preflight.
+ *   2. Pseudo-classes - :hover, :active, :focus-visible, ::selection.
+ *   3. @keyframes.
+ *
+ * Every NUMBER those rules need is still handed in from tokens.ts as a custom
+ * property on the element (see `bevel()`), so the two halves cannot drift.
+ *
+ * HISTORY, so it is not undone by accident: this file used to be the unmodified
+ * Create-Next-App stylesheet, whose `body { background; color; font-family:
+ * Arial }` rule was UNLAYERED. Unlayered CSS beats every Tailwind v4 layered
+ * utility regardless of specificity, so `bg-[#141a2e] text-[#f2f5ff]` on <body>
+ * and the loaded webfont were both silently overridden - the app rendered in
+ * Arial on a white page while claiming a whole design system. Do not add a
+ * `body { font-family: ... }` rule here. Set the face through --font-sans
+ * below, which feeds Tailwind's LAYERED preflight and can still be overridden.
+ */
+
+@theme inline {
+  --font-sans: var(--font-ui);
+  --font-mono: var(--font-display);
+}
+
+:root {
+  --pf-t-press: 70ms;
+  --pf-t-pop: 140ms;
+  --pf-t-slide: 180ms;
+  --pf-ease-pop: cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  /* The world is the viewport. Nothing scrolls, ever. overscroll-behavior
+     matters on a phone: without it, pull-to-refresh eats an upward swipe
+     mid-jump. */
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+::selection {
+  background: #ffd166;
+  color: #06121f;
+}
+
+/* ------------------------------------------------------------------------- */
+/* The pixel button                                                          */
+/* ------------------------------------------------------------------------- */
+
+/*
+ * --pf-shadow, --pf-shadow-down and --pf-press are set inline by bevel() in
+ * src/design/tokens.ts. This rule only chooses between them.
+ *
+ * steps(2, end) rather than an ease: a pixel button that glides is a web
+ * button. The press has to land, not arrive.
+ */
+.pf-press {
+  box-shadow: var(--pf-shadow);
+  transform: translate(0, 0);
+  transition:
+    transform var(--pf-t-press) steps(2, end),
+    box-shadow var(--pf-t-press) steps(2, end),
+    filter 90ms linear;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.pf-press:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.pf-press:active:not(:disabled),
+.pf-press[data-sunk="true"] {
+  box-shadow: var(--pf-shadow-down);
+  transform: translate(var(--pf-press), var(--pf-press));
+}
+
+.pf-press:disabled {
+  filter: grayscale(0.65) brightness(0.6);
+  cursor: not-allowed;
+}
+
+/* A square gold focus ring. The brief bans DEFAULT focus rings, not keyboard
+   access - so this is a game's focus ring rather than the browser's. */
+.pf-press:focus-visible,
+.pf-focus:focus-visible {
+  outline: 3px solid #ffd166;
+  outline-offset: 3px;
+}
+
+.pf-press::-moz-focus-inner {
+  border: 0;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Motion                                                                    */
+/* ------------------------------------------------------------------------- */
+
+@keyframes pf-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.86) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pf-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pf-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pf-bump-k {
+  from {
+    transform: scale(1.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes pf-glint-k {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes pf-blink-k {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.pf-pop {
+  animation: pf-pop-in var(--pf-t-pop) var(--pf-ease-pop) both;
+}
+
+.pf-fade {
+  animation: pf-fade-in 120ms linear both;
+}
+
+.pf-slide-up {
+  animation: pf-slide-in var(--pf-t-slide) var(--pf-ease-pop) both;
+}
+
+/* Keyed on its own value at the call site, so React remounts the node and the
+   animation replays. The single most "game" moment in the HUD. */
+.pf-bump {
+  display: inline-block;
+  animation: pf-bump-k 120ms steps(3, end) both;
+}
+
+.pf-glint {
+  animation: pf-glint-k 1.6s steps(8, end) infinite;
+}
+
+.pf-blink {
+  animation: pf-blink-k 1s steps(1, end) infinite;
+}
+
+/* The keyboard hint under the level name runs into the play dock on a narrow window. */
+@media (max-width: 640px) {
+  .pf-key-hint {
+    display: none;
+  }
+}
+
+/*
+ * A short landscape phone (844x390). The two part rows plus the top dock leave no room for the
+ * tool rail, so the belt becomes ONE row (both groups side by side, 84px tall instead of 168) and
+ * the rail and the play dock move down to sit above it. Layout numbers are inline, hence
+ * !important; 108 = 84 belt + 2 * 12 edge.
+ */
+@media (max-height: 500px) {
+  .pf-belt {
+    height: 84px !important;
+  }
+  .pf-belt-scroll {
+    flex-direction: row !important;
+    align-items: center !important;
+    /* The inline `center` is vertical in the column layout; in a row it would push the first
+       parts off the left edge, where a scroller cannot reach them. */
+    justify-content: flex-start !important;
+    /* A desktop scrollbar would not fit under a 56px chip and its label in 84px; the edge fade
+       shows there is more, and touch, trackpad and the mouse wheel (Editor.tsx) all scroll it. */
+    overflow-y: hidden !important;
+    scrollbar-width: none;
+    gap: 16px !important;
+  }
+  .pf-rail-wrap,
+  .pf-godock {
+    bottom: 108px !important;
+  }
+  /* Without the group dividers, and with tighter spacing, the top dock fits one row, so it stops
+     covering the level. */
+  .pf-divider {
+    display: none;
+  }
+  .pf-viewdock {
+    gap: 3px !important;
+    padding: 6px !important;
+  }
+}
+
+/*
+ * The tweening and the idle loops go. The press DISPLACEMENT stays: a button
+ * that does not move when pressed reads as broken, so the movement is feedback,
+ * not decoration.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .pf-press {
+    transition: none;
+  }
+  .pf-pop,
+  .pf-fade,
+  .pf-slide-up,
+  .pf-bump,
+  .pf-glint,
+  .pf-blink {
+    animation: none;
+  }
+}
