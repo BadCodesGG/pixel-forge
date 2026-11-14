@@ -15,8 +15,16 @@ npm run test:watch
 npm run check          # lint + typecheck + engine typecheck + tests
 ```
 
-Run `npm run check` before opening a pull request. There is no CI workflow in
-this repository, so that command is the gate.
+Run `npm run check` before opening a pull request: it is the gate. CI
+(`.github/workflows/ci.yml`) runs the same checks plus `npm run build` on every
+push to `main`, not on pull requests.
+
+`package.json` `overrides` forces `minimatch` ^11.0.8 under
+`@typescript-eslint/typescript-estree` (lint only) to clear GHSA-g3hv-75wg-m249.
+That package declares ^10 and calls only the named `minimatch()` export, which
+11.x keeps. Drop the override once it declares minimatch >=11.0.1
+(`npm view @typescript-eslint/typescript-estree dependencies.minimatch`), then
+rerun `npm audit`.
 
 ## The one-way dependency rule
 
